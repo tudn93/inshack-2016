@@ -1,0 +1,107 @@
+body{
+	background-color: pink;
+	background-image: url('../img/star.png');
+	margin: 0;
+	color: white;
+}
+
+.page{
+	background-color: rgba(0,0,0,0.31);
+	padding: 20px;
+}
+
+a{
+	font-size: 150%;
+	font-weight: bold;
+	border-width: 2px;
+	border-color: red;
+	border-style: dotted;
+	background-color: #ccc;
+}
+
+.car, .kikoo{
+	padding: 30px;
+	display: inline-block;
+}
+
+.car1, .kikoo3{
+	animation: blinker1 2.5s linear infinite;
+}
+@keyframes blinker1 {
+    0% { opacity: 1.0; background-color: blue;transform: rotate(0deg) translateX(150px) rotate(0deg);}
+    50% { opacity: 1.0; background-color: red;}
+    100% { opacity: 1.0; background-color: blue;transform: rotate(360deg) translateX(150px) rotate(-360deg);}
+}
+
+.car2, .kikoo5 {
+	animation: blinker2 2.5s linear infinite;
+}
+@keyframes blinker2 {
+    0% { opacity: 1.0; background-color: green;transform: rotate(30deg) translateX(150px) rotate(0deg);}
+    50% { opacity: 1.0; background-color: red;}
+    100% { opacity: 1.0; background-color: green;transform: rotate(390deg) translateX(150px) rotate(-360deg);}
+}
+
+.car3, .kikoo1 {
+	animation: blinker3 2.5s linear infinite;
+}
+@keyframes blinker3 {
+    0% { opacity: 1.0; background-color: blue;transform: rotate(360deg) translateX(150px) rotate(0deg);}
+    50% { opacity: 1.0; background-color: yellow;}
+    100% { opacity: 1.0; background-color: blue;transform: rotate(0deg) translateX(150px) rotate(-360deg);}
+}
+
+.car4, .kikoo2 {
+	animation: blinker4 2.5s linear infinite;
+}
+@keyframes blinker4 {
+    0% { opacity: 1.0; background-color: black;transform: rotate(90deg) translateX(150px) rotate(40deg);}
+    50% { opacity: 1.0; background-color: pink;}
+    100% { opacity: 1.0; background-color: black;transform: rotate(450deg) translateX(150px) rotate(-320deg);}
+}
+
+.car5, .kikoo9 {
+	animation: blinker5 5s linear infinite;
+}
+@keyframes blinker5 {
+    0% { opacity: 1.0; background-color: purple;transform: rotate(130deg) translateX(100px) rotate(0deg) translateY(50px);}
+    50% { opacity: 1.0; background-color: green;}
+    100% { opacity: 1.0; background-color: purple;transform: rotate(-230deg) translateX(100px) rotate(-360deg) translateY(50px);}
+}
+
+.car6, .kikoo8 {
+	animation: blinker6 2.5s linear infinite;
+}
+@keyframes blinker6 {
+    0% { opacity: 1.0; background-color: yellow;transform: rotate(0deg) translateX(150px) rotate(-360deg);}
+    50% { opacity: 1.0; background-color: orange;}
+    100% { opacity: 1.0; background-color: yellow;transform: rotate(360deg) translateX(150px) rotate(0deg);}
+}
+
+.car7, .kikoo6 {
+	animation: blinker7 2.5s linear infinite;
+}
+@keyframes blinker7 {
+    0% { opacity: 1.0; background-color: cyan;transform: rotate(360deg) translateX(150px) rotate(-360deg);}
+    50% { opacity: 1.0; background-color: rgb(255, 204, 177);}
+    100% { opacity: 1.0; background-color: cyan;transform: rotate(0deg) translateX(150px) rotate(0deg);}
+}
+
+.car8, .kikoo4 {
+	animation: blinker8 2.5s linear infinite;
+}
+@keyframes blinker8 {
+    0% { opacity: 1.0; background-color: green;transform: rotate(66deg) translateX(150px) rotate(0deg);}
+    50% { opacity: 1.0; background-color: purple;}
+    100% { opacity: 1.0; background-color: green;transform: rotate(426deg) translateX(150px) rotate(-360deg);}
+}
+
+.car9, .kikoo7 {
+	animation: blinker9 2.5s linear infinite;
+}
+@keyframes blinker9 {
+    0% { opacity: 1.0; background-color: red;transform: rotate(360deg) translateX(150px) rotate(0deg) translateY(50px);}
+    50% { opacity: 1.0; background-color: blue;}
+    100% { opacity: 1.0; background-color: red;transform: rotate(0deg) translateX(150px) rotate(-360deg) translateY(50px);}
+}
+

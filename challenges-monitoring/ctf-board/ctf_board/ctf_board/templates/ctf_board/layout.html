@@ -1,0 +1,124 @@
+{% load staticfiles %}
+{% load operations %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			{% block title %}CTF InSecurity{% endblock %}
+		</title>
+		<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+
+	    <link href="{% static 'ctf_board/bootstrap-material-design-master/css/bootstrap3.3.6.min.css' %}" rel="stylesheet" type="text/css" />
+	    <link href="{% static 'ctf_board/bootstrap-material-design-master/css/bootstrap-material-design.min.css' %}" rel="stylesheet" type="text/css" />
+	    <link href="{% static 'ctf_board/bootstrap-material-design-master/css/patch.css' %}" rel="stylesheet" type="text/css" />
+{#	    <link href="{% static 'ctf_board/bootstrap-material-design-master/css/ripples.min.css' %}" rel="stylesheet" type="text/css" />#}
+	    <link href="{% static 'ctf_board/bootstrap-material-design-master/fonts/material_icons.css' %}" rel="stylesheet" type="text/css" />
+	    <link href="{% static 'ctf_board/bootstrap-material-design-master/fonts/roboto.css' %}" rel="stylesheet" type="text/css" />
+
+        {% if request.session.messages %}
+		<link href="{% static 'ctf_board/bootstrap-material-design-master/css/snackbar.min.css' %}" rel="stylesheet" type="text/css" />
+		{% endif %}
+
+	    {% block base_header_addons %}{% endblock %}
+
+	    <!--[if lt IE 9]>
+	        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+	</head>
+
+	<body>
+		<nav class="navbar navbar-default" role="navigation">
+		    <div class="container-fluid">
+		        <div class="navbar-header">
+		            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+		                <span class="icon-bar"></span>
+		                <span class="icon-bar"></span>
+		                <span class="icon-bar"></span>
+		            </button>
+		            <a class="navbar-brand" href="{% url 'challenges:list' %}">CTF InSecurity</a>
+		        </div>
+		        <div class="navbar-collapse collapse navbar-responsive-collapse">
+		            <ul class="nav navbar-nav navbar-right">
+                        <li class="{% block presentation_active %}{% endblock %}"><a href="{% url 'presentation' %}">Presentation</a></li>
+                    {% if request.user.is_authenticated %}
+		                <li class="{% block challenges_list_active %}{% endblock %}"><a href="{% url 'challenges:list' %}">Challenges</a></li>
+		                <li class="{% block score_board_active %}{% endblock %}"><a href="{% url 'challenges:score_board' %}">Score Board</a></li>
+                    {% endif %}
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                        <li class="{% block add_challenge_active %}{% endblock %}"><a href="{% url 'challenges:add' %}">Add Challenge</a></li>
+                    {% endif %}
+		                <li class="dropdown {% block account_active %}{% endblock %}">
+		                    <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown">Account
+		                        <b class="caret"></b></a>
+		                    <ul class="dropdown-menu">
+                            {% if request.user.is_authenticated %}
+		                        <li class="{% block profile_active %}{% endblock %}"><a href="{% url 'team:profile' %}">Profile</a></li>
+		                        <li class="divider"></li>
+                            {% endif %}
+		                        <li class="dropdown-header">Actions</li>
+                            {% if request.user.is_authenticated %}
+                                <li><a href="{% url 'team:logout' %}">Log out</a></li>
+                            {% else %}
+                                <li class="{% block login_active %}{% endblock %}"><a href="{% url 'team:login' %}">Log in</a></li>
+		                        <li class="{% block register_active %}{% endblock %}"><a href="{% url 'team:register' %}">Register</a></li>
+                            {% endif %}
+		                    </ul>
+		                </li>
+		            </ul>
+		        </div>
+		    </div>
+		</nav>
+
+        <section>
+            {% block body %}
+            {% endblock %}
+        </section>
+
+		<!-- scripts -->
+
+		<script src="{% static 'ctf_board/bootstrap-material-design-master/js/jquery-2.2.0.min.js' %}" type="text/javascript"></script>
+		<script src="{% static 'ctf_board/bootstrap-material-design-master/js/bootstrap.min.js' %}" type="text/javascript"></script>
+		<script src="{% static 'ctf_board/bootstrap-material-design-master/js/material.min.js' %}" type="text/javascript"></script>
+
+        {% if request.session.messages %}
+		<script src="{% static 'ctf_board/bootstrap-material-design-master/js/snackbar.min.js' %}" type="text/javascript"></script>
+		{% endif %}
+
+{#        <script src="{% static 'ctf_board/bootstrap-material-design-master/js/ripples.min.js' %}" type="text/javascript"></script>#}
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$.material.init();
+{#				$.material.ripples();#}
+				$.material.input();
+				$.material.checkbox();
+				$.material.radio();
+			});
+		</script>
+
+        {% if request.session.messages %}
+    	<script type="text/javascript">
+        	$(document).ready(function() {
+                // {{ request.session.messages }}
+        	{% for message in request.session.messages %}
+	        	$.snackbar({
+	        		content: "{{ message }}",
+                {% with message_length=message|length %}
+                {% with message_length_times_X=message_length|multiply:25 %}
+                {% with time_to_wait=2500|add:message_length_times_X %}
+	        		timeout: {{ time_to_wait|multiply:forloop.counter }}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+	        	});
+        	{% endfor %}
+                // {{ request.session.messages.clear }}
+            });
+    	</script>
+        {% endif %}
+
+	    {% block base_footer_addons %}{% endblock %}
+
+	</body>
+
+</html>

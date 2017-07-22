@@ -1,0 +1,18 @@
+td[onclick*="window.open("]{
+    cursor: pointer;
+}
+
+button.no-margin{
+    margin:0;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+/* bootstrap fix */
+.modal-footer .btn + .btn.modal-footer-btn{
+    margin-bottom: 10px;
+}
+
+.modal-footer form{
+    display: inline;
+}

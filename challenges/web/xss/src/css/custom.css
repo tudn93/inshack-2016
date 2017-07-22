@@ -1,0 +1,110 @@
+body {
+    background: no-repeat fixed;
+    background-image: url("../img/ninja_burger2.jpg");
+    background-size: cover;
+    background-position: 25% top;
+	margin: 0;
+	padding: 0;
+}
+
+#background-container{
+	background-color: rgba(0, 0, 0, 0.25);
+	position: absolute;
+	min-height: 100%;
+	min-width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.jumbotron{
+	margin-top: 15px;
+}
+
+.box{
+	background-color: rgba(255, 255, 255, 0.77);
+	padding-right: 0;
+	padding-left: 0;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.row{
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.form{
+	margin-bottom: 20px;
+}
+
+.form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form input[name="title"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form input[name="content"] {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.img-responsive{
+	border: 1px solid rgb(180,180,180);
+}
+
+.circle-green{
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-color: #2ec933;
+	border: 1px solid rgb(140,140,140);
+}
+.circle-green:hover{
+	background-color: #27a52b;
+}
+i.glyphicon-thumbs-up{
+	font-size: 150%;
+	padding-top: 18px;
+	padding-right: -2px;
+	color: white;
+}
+
+.circle-red{
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-color: #bc2f3f;
+	border: 1px solid rgb(140,140,140);
+}
+.circle-red:hover{
+	background-color: #932633;
+}
+i.glyphicon-thumbs-down{
+	font-size: 150%;
+	padding-top: 18px;
+	padding-right: -2px;
+	color: white;
+}
+
+.voting{
+	position: relative;
+	top: -30px;
+}
+
+.btn-warning:hover{
+	background-color: #f0ad4e;
+	border-color: #eea236;
+	cursor: default;
+}

@@ -1,0 +1,226 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+{% load field_type %}
+
+{% block challenges_list_active %}active{% endblock %}
+{% block title %}{{ block.super }} | {{ challenge }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well" id="header">
+                    <h1>
+                        {% if challenge_valide %}
+                        <i class="material-icons text-success">check_circle</i>
+                        {% else %}
+                        <i class="material-icons text-danger">remove_circle</i>
+                        {% endif %}
+                        {{ challenge }}
+                    </h1>
+                    {% if rank and rank == 1 %}
+                    <h2>
+                        <i class="material-icons">star</i><i class="material-icons">star</i><i class="material-icons">star</i>
+                        First Blood !
+                        <i class="material-icons">star</i><i class="material-icons">star</i><i class="material-icons">star</i>
+                        <small>&nbsp;-&nbsp; You won an extra {{ challenge.nb_points_first_blood }}pts for that :)</small>
+                    </h2>
+                    {% endif %}
+                    {% if rank and rank == 2 %}
+                    <h2>
+                        <i class="material-icons">star</i><i class="material-icons">star</i>
+                        Second blood
+                        <i class="material-icons">star</i><i class="material-icons">star</i>
+                        <small>&nbsp;&nbsp; You won an extra {{ challenge.nb_points_second_blood }}pts for that :)</small>
+                    </h2>
+                    {% endif %}
+                    {% if rank and rank == 3 %}
+                    <h2>
+                        <i class="material-icons">star</i>
+                        Third blood
+                        <i class="material-icons">star</i>
+                        <small>&nbsp;&#8213;&nbsp; You won an extra {{ challenge.nb_points_third_blood }}pts for that :)</small>
+                    </h2>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="well" id="chall-stats">
+                    <h2>
+                        What kind of challenge ? <br>
+                        <small>A challenge written by : {{ challenge.authors }}</small>
+                        </h2>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <span class="label label-primary">{{ challenge.nb_points }}pts</span>
+                            <span class="label label-success">{{ challenge.get_category_display }}</span>
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-8">
+                <div class="well" id="chall-description">
+                    <h2>The challenge explained :</h2>
+                    <div class="showdown">{{ challenge.description }}</div>
+                    {% if challenge.chall_file %}
+                    <p style="font-size: 120%">
+                        The <i>challenge's file</i> : <a href="{{ challenge.chall_file.url }}"><i class="material-icons" style="font-size: 220%">attachment</i></a>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <h2>
+                        Validation
+                        {% if challenge_valide %}
+                        <small> (you already flagged this challenge)</small>
+                        {% endif %}
+                    </h2>
+                    <form method="post" action="{% url 'challenges:display' challenge.slug %}" class="form-horizontal">
+                        <fieldset>
+
+                            {% for field in submition_form %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                    <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                    <div class="col-md-10">
+                                        {% for error in field.errors %}
+                                            <p class="text-danger">{{ error }}</p>
+                                        {% endfor %}
+                                        {{ field }}
+                                        <p class="help-block">{{ field.help_text }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button type="submit" class="btn btn-raised btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    {% if challenge_form %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <h2>
+                        Update (or delete) challenge
+                        <small>
+                            <br>
+                            <button class="btn btn-sm btn-raised btn-danger no-margin" data-toggle="modal" data-target="#dialog-{{ chall.slug }}">
+                                <i class="material-icons">delete</i>
+                            </button>
+                        </small>
+                    </h2>
+
+                <!-- begin modal -->
+                    <div id="dialog-{{ chall.slug }}" class="modal fade" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Are you sure to delete "{{ challenge.name }}" ?</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>If you delete this challenge you won't be able to recover it !</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a type="button" class="btn btn-default btn-raised modal-footer-btn" data-dismiss="modal">Cancel</a>
+                                    <form action="{% url 'challenges:delete' challenge.slug %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-danger btn-raised modal-footer-btn" value="Delete it !">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- end modal -->
+
+                    <form method="post" action="{% url 'challenges:update' challenge.slug %}" class="form-horizontal" enctype="multipart/form-data">
+                        <fieldset>
+
+                            {% for field in challenge_form %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                    <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                    <div class="col-md-10">
+
+                                {% if field|fieldtype == 'CheckboxInput' %}
+                                        <div class="togglebutton">
+                                            <label>
+                                                {% for error in field.errors %}
+                                                    <p class="text-danger">{{ error }}</p>
+                                                {% endfor %}
+                                                {{ field }}
+                                            </label>
+                                        </div>
+                                {% else %}
+                                        {% for error in field.errors %}
+                                            <p class="text-danger">{{ error }}</p>
+                                        {% endfor %}
+                                        {{ field }}
+                                        {% if field|fieldtype == 'FileInput' %}
+                                            <div class="input-group">
+                                                <input readonly class="form-control" placeholder="{{ field.field.widget.attrs.placeholder }}" type="text">
+                                                <span class="input-group-btn input-group-sm">
+                                                    <button type="button" class="btn btn-fab btn-fab-mini">
+                                                        <i class="material-icons">{{ field.field.widget.attrs.icon }}</i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        {% endif %}
+
+                                {% endif %}
+                                    {% autoescape off %}
+                                        <p class="help-block">{{ field.help_text }}</p>
+                                    {% endautoescape %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button type="submit" class="btn btn-raised btn-primary">Update challenge !</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+    <script src="{% static 'challenges/showdown.min.js' %}" type="text/javascript"></script>
+    <script>
+        $(document).ready(function() {
+            /* Showdown markup with tag stripping*/
+            var converter = new showdown.Converter({headerLevelStart: 3});
+            var text = $(".showdown").html();
+            $(".showdown").html(converter.makeHtml(text.replace(/(<([^>]+)>)/ig,"")));
+
+        })
+    </script>
+{% endblock %}
+
+{% block base_header_addons %}
+    {{ block.super }}
+    <link href="{% static 'challenges/display.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}

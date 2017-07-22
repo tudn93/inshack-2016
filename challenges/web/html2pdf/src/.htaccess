@@ -1,0 +1,4 @@
+Options -Indexes
+<Files ~ "^/templates">
+	Deny from all
+</Files>

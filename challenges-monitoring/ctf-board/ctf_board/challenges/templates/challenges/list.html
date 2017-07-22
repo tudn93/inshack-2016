@@ -1,0 +1,128 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+
+{% block challenges_list_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Challenges{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                {% if not request.user.is_staff and not ctf_settings.is_running %}
+                    <h1>The CTF is offline for now.</h1>
+                    <small>Please wait up a bit.</small>
+                {% else %}
+                    <h1>List of challenges</h1>
+                    {% if not challenges %}
+                        There is no challenge available yet.
+                    {% else %}
+                    <table class="table table-striped table-hover" id="challs">
+                        <thead>
+                        <tr>
+                            <th>Points</th>
+                            <th>Category</th>
+                            <th>Name</th>
+                            <th>Number of validations</th>
+                            <th>Firsts teams to flag</th>
+                        {% if request.user.is_staff %}
+                            <th>Challenge enabled ?</th>
+                        {% endif %}
+                        {% if request.user.is_staff %}
+                            <th>Delete ?</th>
+                        {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chall_item in challenges_list %}
+                            <tr {% if forloop.counter0 in chall_validated %}
+                                    class="success"
+                                {% endif %}>
+                                <td onclick="window.open('{% url 'challenges:display' chall_item.chall.slug %}')">
+                                    {{ chall_item.chall.nb_points }}
+                                </td>
+                                <td onclick="window.open('{% url 'challenges:display' chall_item.chall.slug %}')">{{ chall_item.chall.get_category_display }}</td>
+                                <td onclick="window.open('{% url 'challenges:display' chall_item.chall.slug %}')">{{ chall_item.chall.name }}</td>
+                                <td onclick="window.open('{% url 'challenges:display' chall_item.chall.slug %}')">{{ chall_item.flaggers.count }}</td>
+                                <td onclick="window.open('{% url 'challenges:display' chall_item.chall.slug %}')">
+                                    {% if chall_item.flaggers.all.0 %}
+                                        <span class="label label-info">{{ chall_item.flaggers.all.0 }}</span>
+                                        {% if chall_item.flaggers.all.1 %}
+                                            <span class="label label-primary">{{ chall_item.flaggers.all.1 }}</span>
+                                            {% if chall_item.flaggers.all.2 %}
+                                                <span class="label label-default">{{ chall_item.flaggers.all.2 }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        No one ! You can be the first.
+                                    {% endif %}
+                                </td>
+
+                            {% if request.user.is_staff %}
+                                <td onclick="window.open('{% url 'challenges:display' chall_item.chall.slug %}')">
+                                {% if chall_item.chall.is_enabled %}
+                                    <i class="material-icons">wifi</i>
+                                {% else %}
+                                    <i class="material-icons">signal_wifi_off</i>
+                                {% endif %}
+                                </td>
+                            {% endif %}
+
+                            {% if request.user.is_staff %}
+                                <td>
+                                    <button class="btn btn-sm btn-raised btn-danger no-margin" data-toggle="modal" data-target="#dialog-{{ chall.slug }}">
+                                        <i class="material-icons">delete</i>
+                                    </button>
+
+                                    <div id="dialog-{{ chall.slug }}" class="modal fade" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                    <h4 class="modal-title">Are you sure to delete "{{ chall.name }}" ?</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>If you delete this challenge you won't be able to recover it !</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a type="button" class="btn btn-default btn-raised modal-footer-btn" data-dismiss="modal">Cancel</a>
+                                                    <form action="{% url 'challenges:delete' chall.slug %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input type="submit" class="btn btn-danger btn-raised modal-footer-btn" value="Delete it !">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            {% endif %}
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+    <script src="{% static 'ctf_board/sortable-js/jquery.tablesorter.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+        {% if ctf_settings.is_running or request.user.is_staff %}
+            $("#challs").tablesorter();
+        {% endif %}
+        });
+    </script>
+{% endblock %}
+
+{% block base_header_addons %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'ctf_board/sortable-js/tablesorter.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'challenges/list.css' %}" />
+{% endblock %}

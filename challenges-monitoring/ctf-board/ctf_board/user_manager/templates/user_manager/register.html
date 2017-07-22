@@ -1,0 +1,127 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+{% load field_type %}
+
+{% block register_active %}active{% endblock %}
+{% block account_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Register{% endblock %}
+
+{% block body %}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 jumbotron">
+                <h1>Register to InSecurity CTF</h1>
+                <p>
+                    To register please fill in the form below. <br>
+                    If you already have an account you can <a href="{% url 'team:login' %}">log in here</a>.
+                </p>
+            </div>
+        </div>
+		<div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <form method="post" action="{% url 'team:register' %}" enctype="multipart/form-data" class="form-horizontal" id="form-register">
+                        <fieldset>
+                        {% for field in team_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                <div class="col-md-10">
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                    {{ field }}
+                                {% autoescape off %}
+                                    <p class="help-block">{{ field.help_text }}</p>
+                                {% endautoescape %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        {% for field in team_profile_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                <div class="col-md-10">
+                                    {% if field|fieldtype == 'CheckboxInput' %}
+                                        <div class="togglebutton">
+                                            <label>
+                                                {% for error in field.errors %}
+                                                    <p class="text-danger">{{ error }}</p>
+                                                {% endfor %}
+                                                {{ field }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+
+
+                                        {% for error in field.errors %}
+                                            <p class="text-danger">{{ error }}</p>
+                                        {% endfor %}
+                                        {{ field }}
+                                        {% if field|fieldtype == 'FileInput' or field|fieldtype == 'MultiFileInput' %}
+                                            <div class="input-group">
+                                                <input readonly class="form-control" placeholder="{{ field.field.widget.attrs.placeholder }}" type="text">
+                                                <span class="input-group-btn input-group-sm">
+                                                    <button type="button" class="btn btn-fab btn-fab-mini">
+                                                        <i class="material-icons">{{ field.field.widget.attrs.icon }}</i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                        {% autoescape off %}
+                                            <p class="help-block">{{ field.help_text }}</p>
+                                        {% endautoescape %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button type="submit" class="btn btn-raised btn-primary">Register</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+	</div>
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+    <script src="{% static 'ctf_board/crypto/sha256.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#form-register").on('submit', function(){
+                var $password_input = $("#id_password");
+                var $password_validation_input = $("#id_password_validation");
+                if($password_input.val() != "" && $password_validation_input.val() != "") {
+                    $password_input.css("font-size", '0');
+                    $password_validation_input.css("font-size", '0');
+                    $password_input.val(Sha256.hash($password_input.val() + "w4aVqB6w6BMoR4AXfRTakuuV3fm9ErMxFkAFdwhjXUJt2xQQ9U"));
+                    $password_validation_input.val(Sha256.hash($password_validation_input.val() + "w4aVqB6w6BMoR4AXfRTakuuV3fm9ErMxFkAFdwhjXUJt2xQQ9U"));
+                }
+            });
+        });
+        window.onload = function () {
+            document.getElementById("id_password").oninput = validatePassword;
+            document.getElementById("id_password_validation").oninput = validatePassword;
+        };
+        function validatePassword(){
+            var pass2=document.getElementById("id_password_validation").value;
+            var pass1=document.getElementById("id_password").value;
+            if(pass1 != pass2)
+                document.getElementById("id_password_validation").setCustomValidity("Passwords Don't Match");
+            else
+                document.getElementById("id_password_validation").setCustomValidity('');
+                //empty string means no validation error
+        }
+    </script>
+{% endblock %}
+
+{% block page_header_addons %}
+    {{ block.super }}
+{% endblock %}

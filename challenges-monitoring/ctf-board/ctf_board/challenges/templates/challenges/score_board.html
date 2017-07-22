@@ -1,0 +1,102 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+
+{% block score_board_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Score Board{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                {% if not request.user.is_staff and not ctf_settings.is_running %}
+                    <h1>The CTF is offline for now.</h1>
+                    <small>Please wait up a bit.</small>
+                {% else %}
+                    <h1>Ranking</h1>
+                    <table class="table table-striped table-hover" id="rank">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>On Site ?</th>
+                                <th>Avatar</th>
+                                <th>Score</th>
+                                <th>Team name</th>
+                                <th>Flagged challenges</th>
+                                <th>Fast flagging reward</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for team_ranking in teams_ranking %}
+                            <tr onclick="window.open('{% url 'team:profile_other_user' team_ranking.team.username %}')">
+                                <td class="vertical-centered">{{ team_ranking.rank }}</td>
+                                <td class="vertical-centered">
+                                {% if team_ranking.team.teamprofile.on_site %}
+                                    <i class="material-icons text-success">check</i>
+                                {% else %}
+                                    <i class="material-icons text-danger">close</i>
+                                {% endif %}
+                                </td>
+                                <td class="vertical-centered">
+                                    {% if team_ranking.team.teamprofile.avatar %}
+                                    <img src="{{ team_ranking.team.teamprofile.avatar.url }}" alt="{{ team_ranking.team }}'s avatar" class="img-responsive" style="height: 50px;">
+                                    {% else %}
+                                    <img src="https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.paladinregistry.com%2Fassets%2Fdefault-avatar.png&f=1" alt="default avatar" class="img-responsive" style="height: 50px;">
+                                    {% endif %}
+                                </td>
+                                <td class="vertical-centered">
+                                    {{ team_ranking.team.teamprofile.score }}
+                                </td>
+                                <td class="vertical-centered">
+                                    {{ team_ranking.team.username }}
+                                </td>
+                                <td class="vertical-centered">
+                                {% if not team_ranking.team.teamprofile.validated_challenges.all %}
+                                    <i class="material-icons">timer</i>
+                                {% else %}
+                                {% for chall in team_ranking.team.teamprofile.validated_challenges.all %}
+                                    <span class="label label-info">{{ chall.name }}</span>
+                                {% endfor %}
+                                {% endif %}
+                                </td>
+                                <td class="vertical-centered">
+                                {% if not team_ranking.reward_range %}
+                                    <i class="material-icons">close</i>
+                                {% else %}
+                                {% for i in team_ranking.reward_range %}
+                                    <i class="material-icons">star</i>
+                                    {% if forloop.counter|divisibleby:6 %}<br>{% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+
+	</div>
+
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+    <script src="{% static 'ctf_board/sortable-js/jquery.tablesorter.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+        {% if ctf_settings.is_running or request.user.is_staff %}
+            $("#rank").tablesorter();
+        {% endif %}
+        });
+    </script>
+{% endblock %}
+
+{% block base_header_addons %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'ctf_board/sortable-js/tablesorter.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'challenges/score_board.css' %}" />
+{% endblock %}

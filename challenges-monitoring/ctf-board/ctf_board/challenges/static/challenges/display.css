@@ -1,0 +1,27 @@
+span.label{
+    font-size: 120%;
+}
+
+#header i.material-icons{
+    font-size: 75%;
+}
+
+/* bootstrap fix */
+.modal-footer .btn + .btn.modal-footer-btn{
+    margin-bottom: 10px;
+}
+
+.modal-footer form{
+    display: inline;
+    height: 85%;
+	padding: 8px;
+}
+
+.showdown {
+	overflow: auto;
+	padding: 10px;
+}
+
+#chall-stats{
+	padding-bottom: 30px;
+}

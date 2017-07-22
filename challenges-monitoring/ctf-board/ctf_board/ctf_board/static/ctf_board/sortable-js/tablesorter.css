@@ -1,0 +1,15 @@
+th{
+    border-right: solid 1px #DDD;
+}
+th.header {
+    cursor: pointer;
+    background: url(bg.gif) no-repeat 100% 55%;
+}
+
+th.headerSortUp {
+    background: url(asc.gif) no-repeat 100% 60%;
+}
+
+th.headerSortDown {
+    background: url(desc.gif) no-repeat center right;
+}

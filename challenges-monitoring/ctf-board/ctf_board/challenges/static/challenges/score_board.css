@@ -1,0 +1,7 @@
+td.vertical-centered {
+    vertical-align: middle !important;
+}
+
+tr{
+    cursor: pointer;
+}

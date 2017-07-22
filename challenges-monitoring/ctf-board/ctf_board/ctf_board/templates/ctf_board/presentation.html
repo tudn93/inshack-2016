@@ -1,0 +1,69 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+
+{% block presentation_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Login{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 jumbotron">
+                <h1>Welcome to InSecurity CTF !</h1>
+                <p>Want to hack things ? You are in the right place ;)</p>
+            </div>
+        </div>
+		<div class="row">
+            <div class="col-xs-12">
+                <div class="well" style="font-size: 110%">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3 col-xs-12">
+                            <img src="{% static 'ctf_board/img/logo.png' %}" alt="inshack logo" class="img img-responsive">
+                        </div>
+                    </div>
+                    <h2>Presentation</h2>
+                    <p>After the conferences (see <a href="http://inshack.insecurity-insa.fr">the confs planning here</a>) InSecurity organizes a CTF (Capture The Flag).</p>
+                    <p>
+                        If you live in Lyon, we recommand you to come on site to participate (see <a target="_blank" href="http://www.openstreetmap.org/?mlat=45.7819&mlon=4.8728#map=15/45.7819/4.8728">where the CTF takes place</a>). There will be free drinks/food, more challenges and gifts !<br>
+                        Otherwise you can also participate online (using this website).
+                    </p>
+                    <p>
+                        In the CTF you will find challenges of different kind, like <b>web</b>, <b>steganography</b>, <b>cryptography</b>, <b>reverse</b> and <b>binaries</b>.
+                        <br>
+                        There will be challenges for everyone, beginners or experienced !
+                    </p>
+
+                    <p>
+                        The CTF starts the <time datetime="2016-04-07 18:30">Thursday 07 April at 06:30PM (GMT+2)</time> and ends the <time datetime="2016-04-07 18:30">Thursday 07 April at 11:59PM (GMT+2)</time>.
+                    </p>
+                    <h2>Some rules</h2>
+                    <ul>
+                        <li>
+                           It will be a Jeopardy-style CTF
+                        </li>
+                        <li>
+                        The firsts 3 teams to flag a challenges receive bonus points (+33% for the first, +25% for the second then 16% for the third)
+                        </li>
+                        <li>
+                            You should <a href="{% url 'team:register' %}">register your team here</a> before the 07/04. A team should contain 1 to 4 participants.
+                        </li>
+                        <li>
+                            Some challenges will only be available on site
+                        </li>
+                        <li>
+                            Any degradation of service may result in disqualification
+                        </li>
+                    </ul>
+                    <h2>Contact</h2>
+                    <p>For any question, please contact us using <a href="mailto:contact@insecurity-insa.fr">this mail address</a>.</p>
+                </div>
+            </div>
+        </div>
+	</div>
+
+{% endblock %}
+
+
+{% block page_header_addons %}
+    {{ block.super }}
+    {# css here #}
+{% endblock %}

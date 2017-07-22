@@ -1,0 +1,29 @@
+### chroot
+
+apt-get install binutils debootstrap
+mkdir -p /srv/jail/
+debootstrap --arch amd64 wheezy /srv/jail http://httpredir.debian.org/debian
+
+chroot /srv/jail
+
+cat > ./usr/sbin/policy-rc.d <<EOF
+    #!/bin/sh
+    exit 101
+    EOF
+chmod a+x ./usr/sbin/policy-rc.d
+
+dpkg-divert --divert /usr/bin/ischroot.debianutils --rename /usr/bin/ischroot
+ln -s /bin/true /usr/bin/ischroot
+apt-get install deborphan
+deborphan -a
+apt-get remove --purge telnet manpages pppconfig ipchains list svgalibg1 whiptail 
+exit
+
+nano /etc/ssh/sshd_config
+    Match group sshusers
+        ChrootDirectory /srv/jail
+        X11Forwarding no
+        AllowTcpForwarding no
+
+groupadd sshusers
+cat /home/insecurity/.bashrc > /srv/jail/etc/bash.bashrc

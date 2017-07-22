@@ -1,0 +1,9 @@
+**/__pycache__
+**/.DS_Store
+**/databases.py
+**.pyc
+**/secret_key.txt
+**.idea/
+***.sqlite3
+ctf_board/static/*
+ctf_board/media/*

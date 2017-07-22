@@ -1,0 +1,267 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+{% load access %}
+{% load field_type %}
+
+{% block profile_active %}active{% endblock %}
+{% block account_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Team Profile{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row vertical-centered" id="team-header">
+            {% if team_profile.avatar %}
+            <div class="col-sm-3">
+                <img src="{{ team_profile.avatar.url }}" alt="{{ team }}'s avatar" class="img-responsive" id="team-logo">
+            </div>
+            {% endif %}
+            <div class="{% if team_profile.avatar %}col-sm-9{% else %}col-sm-12{% endif %}">
+                <div class="well">
+                    <h1>{{ team }}'s profile</h1>
+                    {% if ctf_settings.is_running and request.user.is_active or request.user.is_staff %}
+                    <span class="label label-primary">Rank {{ rank }}/{{ number_of_contenders }}</span>
+                    <span class="label label-success">{{ team_profile.score }} points</span>
+                    <h3>{{ name }} flagged {{ percentage_valitated_challs }}% of the challenges</h3>
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar progress-bar-info" style="width: {{ percentage_valitated_challs }}%;"></div>
+                    </div>
+                    {% elif not request.user.is_active %}
+                        <h3>Your account is not yet enabled.</h3>
+                        We sent you an email to validate your account, please check it out. <br>
+                        If you didn't receive anything, you can try to
+                        <form action="{% url 'team:resend_mail' request.user.username %}" method="POST" style="display: inline">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-primary btn-raised btn-sm" value="resend email">
+                        </form>
+                        <br>
+                        If you don't receive any mail, please contact the staff at <a href="mailto:contact@insecurity-insa.fr">contact@insecurity-insa.fr</a>.
+                    {% elif not ctf_settings.is_running %}
+                        <h3>The CTF is not running yet. Please wait up a bit.</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+{% if ctf_settings.is_running and request.user.is_active or request.user.is_staff %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <h2>List of flagged challenges</h2>
+                {% if not team_profile.validated_challenges.all %}
+                    <b>No challenge flagged yet.</b>
+                {% else %}
+                    <table class="table table-striped table-hover" id="validated_challs">
+                        <thead>
+                            <tr>
+                                <th>Points</th>
+                                <th>Category</th>
+                                <th>Name</th>
+                                <th>Number of validations</th>
+                                <th>One of the firsts ?</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for chall in team_profile.validated_challenges.all %}
+                            <tr onclick="window.open('{% url 'challenges:display' chall.slug %}')">
+                                <td>{{ chall.nb_points }}</td>
+                                <td>{{ chall.get_category_display }}</td>
+                                <td>{{ chall.name }}</td>
+                                <td>{{ chall.flaggers.count }}</td>
+                                <td>
+                                    {% if rank_by_challenge_val|access:forloop.counter0 == 1 %}
+                                        <i class="material-icons">star</i><i class="material-icons">star</i><i class="material-icons">star</i>
+                                        First blood !
+                                        <i class="material-icons">star</i><i class="material-icons">star</i><i class="material-icons">star</i>
+                                    {% elif rank_by_challenge_val|access:forloop.counter0 == 2 %}
+                                        <i class="material-icons">star</i><i class="material-icons">star</i>
+                                        Second blood !
+                                        <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    {% elif rank_by_challenge_val|access:forloop.counter0 == 3 %}
+                                        <i class="material-icons">star</i>
+                                        Third blood !
+                                        <i class="material-icons">star</i>
+                                    {% else %}
+                                        Not in the top 3.
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+{% endif %}
+
+    {% if personnal_space or request.user.is_staff %}
+		<div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <h2>Update {{ pronoum }} information below.</h2>
+                    <form method="post" action="{% url 'team:profile_other_user' team.username %}" enctype="multipart/form-data" class="form-horizontal" id="form-update-profile">
+                        <fieldset>
+                        {% for field in team_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                <div class="col-md-10">
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                    {{ field }}
+                                {% autoescape off %}
+                                    <p class="help-block">{{ field.help_text }}</p>
+                                {% endautoescape %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        {% for field in team_profile_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                <div class="col-md-10">
+
+                                {% if field|fieldtype == 'FileInput' or field|fieldtype == 'MultiFileInput' %}
+
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                    {{ field }}
+                                        <div class="input-group">
+                                            <input readonly class="form-control" placeholder="{{ field.field.widget.attrs.placeholder }}" type="text">
+                                            <span class="input-group-btn input-group-sm">
+                                                <button type="button" class="btn btn-fab btn-fab-mini">
+                                                    <i class="material-icons">{{ field.field.widget.attrs.icon }}</i>
+                                                </button>
+                                            </span>
+                                        </div>
+
+                                {% elif field|fieldtype == 'CheckboxInput' and field.name == "delete_avatar" %}
+                                    <div class="checkbox">
+                                        <label>
+                                            {% for error in field.errors %}
+                                                <p class="text-danger">{{ error }}</p>
+                                            {% endfor %}
+                                            {{ field }}
+                                        </label>
+                                    </div>
+                                {% elif field|fieldtype == 'CheckboxInput' and field.name == "on_site" %}
+                                    <div class="togglebutton">
+                                        <label>
+                                            {% for error in field.errors %}
+                                                <p class="text-danger">{{ error }}</p>
+                                            {% endfor %}
+                                            {{ field }}
+                                        </label>
+                                    </div>
+
+                                {% else %}
+
+                                {% for error in field.errors %}
+                                    <p class="text-danger">{{ error }}</p>
+                                {% endfor %}
+                                    {{ field }}
+                                {% endif %}
+
+                                    {% autoescape off %}
+                                        <p class="help-block">{{ field.help_text }}</p>
+                                    {% endautoescape %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button type="submit" class="btn btn-raised btn-primary">Update profile</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+		<div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <h2>Delete {{ pronoum }} team.</h2>
+                    Do {{ name }} wanna leave us ? <br>
+                    <button class="btn btn-sm btn-raised btn-danger no-margin" data-toggle="modal" data-target="#dialog-{{ team.username }}">
+                        Delete account
+                    </button>
+
+                    <!-- begin dialog -->
+                    <div id="dialog-{{ team.username }}" class="modal fade" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Are you sure to delete {{ pronoum }} account ?</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>If you delete it you won't be able to recover it !</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a type="button" class="btn btn-default btn-raised modal-footer-btn" data-dismiss="modal">Cancel</a>
+                                    <form action="{% url 'team:delete' team.username %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-danger btn-raised modal-footer-btn" value="Delete it !">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end dialog -->
+
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+	</div>
+
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+    <script src="{% static 'ctf_board/sortable-js/jquery.tablesorter.min.js' %}"></script>
+    <script src="{% static 'ctf_board/crypto/sha256.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+        {% if ctf_settings.is_running and request.user.is_active or request.user.is_staff %}
+            $("#validated_challs").tablesorter();
+        {% endif %}
+            $("#form-update-profile").on('submit', function(){
+                var $password_input = $("#id_password");
+                var $password_validation_input = $("#id_password_validation");
+                if($password_input.val() != "" && $password_validation_input.val() != "") {
+                    $password_input.css("font-size", '0');
+                    $password_validation_input.css("font-size", '0');
+                    $password_input.val(Sha256.hash($password_input.val() + "w4aVqB6w6BMoR4AXfRTakuuV3fm9ErMxFkAFdwhjXUJt2xQQ9U"));
+                    $password_validation_input.val(Sha256.hash($password_validation_input.val() + "w4aVqB6w6BMoR4AXfRTakuuV3fm9ErMxFkAFdwhjXUJt2xQQ9U"));
+                }
+            });
+        });
+        window.onload = function () {
+            document.getElementById("id_password").oninput = validatePassword;
+            document.getElementById("id_password_validation").oninput = validatePassword;
+        };
+        function validatePassword(){
+            var pass2=document.getElementById("id_password_validation").value;
+            var pass1=document.getElementById("id_password").value;
+            if(pass1 != pass2)
+                document.getElementById("id_password_validation").setCustomValidity("Passwords Don't Match");
+            else
+                document.getElementById("id_password_validation").setCustomValidity('');
+                //empty string means no validation error
+        }
+    </script>
+{% endblock %}
+
+{% block base_header_addons %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'ctf_board/sortable-js/tablesorter.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'user_manager/profile.css' %}" />
+{% endblock %}

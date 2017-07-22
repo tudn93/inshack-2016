@@ -1,0 +1,5 @@
+(Wed, 09 Mar 2016 17:11:49 +0000)[DEBUG] - opening file '.bob_encrypted/enc_mail' using flag 'rb'
+(Wed, 09 Mar 2016 17:11:49 +0000)[DEBUG] - deciphering
+(Wed, 09 Mar 2016 17:11:49 +0000)[DEBUG] - computing using ([105, 108, 111, 118, 101, 99, 114, 121, 112, 116, 111, 103, 114, 97, 112, 104, 121])
+(Wed, 09 Mar 2016 17:11:49 +0000)[DEBUG] - writing readable file 'mail' using 'w' flag
+(Wed, 09 Mar 2016 17:11:49 +0000)[DEBUG] - keeping encrypted file anyway

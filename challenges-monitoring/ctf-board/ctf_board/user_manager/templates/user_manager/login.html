@@ -1,0 +1,69 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+
+{% block login_active %}active{% endblock %}
+{% block account_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Login{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 jumbotron">
+                <h1>Log in to InSecurity CTF</h1>
+                <p>You're new ? You can also <a href="{% url 'team:register' %}">register here</a>.</p>
+            </div>
+        </div>
+		<div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <form method="post" action="" class="form-horizontal" id="form-login">
+                        <fieldset>
+                            {% for field in login_form %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                    <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                    <div class="col-md-10">
+                                        {% for error in field.errors %}
+                                            <p class="text-danger">{{ error }}</p>
+                                        {% endfor %}
+                                        {{ field }}
+                                        <p class="help-block">{{ field.help_text }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button type="submit" class="btn btn-raised btn-primary">Login</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+	</div>
+
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+    <script src="{% static 'ctf_board/crypto/sha256.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $("#form-login").on('submit', function(){
+                var $password_input = $("#id_password");
+                if($password_input.val() != "") {
+                    $password_input.css("font-size", '0');
+                    $password_input.val(Sha256.hash($password_input.val() + "w4aVqB6w6BMoR4AXfRTakuuV3fm9ErMxFkAFdwhjXUJt2xQQ9U"));
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block page_header_addons %}
+    {{ block.super }}
+    {# css here #}
+{% endblock %}

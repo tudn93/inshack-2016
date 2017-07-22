@@ -1,0 +1,32 @@
+#team-header{
+     margin-bottom: 20px;
+}
+
+#team-logo{
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+tr{
+    cursor: pointer;
+}
+
+#validated_challs i.material-icons{
+    font-size: 80%;
+}
+
+.vertical-centered{
+    align-items: center;
+    display: flex;
+}
+
+.modal-footer form{
+    display: inline;
+}
+
+@media (max-width: 1001px){
+    #team-logo{
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

@@ -1,0 +1,86 @@
+{% extends "ctf_board/layout.html" %}
+{% load staticfiles %}
+{% load field_type %}
+
+{% block add_challenge_active %}active{% endblock %}
+{% block title %}{{ block.super }} | Adding Challenge{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 jumbotron">
+                <div class="">
+                    <h1>Use the form bellow to add a challenge</h1>
+                    <p>
+                        If something is broken then help yourself and solve it ! (and blame Hugo)
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <form method="post" action="" class="form-horizontal" enctype="multipart/form-data">
+                        <fieldset>
+
+                            {% for field in challenge_form %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                    <label for="{{ field.name }}" class="col-md-2 control-label">{{ field.label }}</label>
+                                    <div class="col-md-10">
+
+                                        {% if field|fieldtype == 'CheckboxInput' %}
+                                            <div class="togglebutton">
+                                                <label>
+                                                    {% for error in field.errors %}
+                                                        <p class="text-danger">{{ error }}</p>
+                                                    {% endfor %}
+                                                    {{ field }}
+                                                </label>
+                                            </div>
+                                        {% else %}
+                                            {% for error in field.errors %}
+                                                <p class="text-danger">{{ error }}</p>
+                                            {% endfor %}
+                                            {{ field }}
+                                            {% if field|fieldtype == 'FileInput' %}
+                                                <div class="input-group">
+                                                    <input readonly class="form-control" placeholder="{{ field.field.widget.attrs.placeholder }}" type="text">
+                                                    <span class="input-group-btn input-group-sm">
+                                                        <button type="button" class="btn btn-fab btn-fab-mini">
+                                                            <i class="material-icons">{{ field.field.widget.attrs.icon }}</i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+
+                                        {% endif %}
+                                        {% autoescape off %}
+                                            <p class="help-block">{{ field.help_text }}</p>
+                                        {% endautoescape %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button type="submit" class="btn btn-raised btn-primary">Submit challenge !</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+	</div>
+
+{% endblock %}
+
+{% block base_footer_addons %}
+	{{ block.super }}
+{% endblock %}
+
+{% block base_header_addons %}
+    {{ block.super }}
+{% endblock %}

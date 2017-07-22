@@ -1,0 +1,1 @@
+FLAG{UAF_for_newbies_did_you_liked_it?}
